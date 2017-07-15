@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>demo1</title>
+	<script src="../build/react.js"></script>
+	<script src="../build/react-dom.js"></script>
+	<!--browser将jsx语法转化为JavaScript-->
+	<script src="../build/browser.min.js"></script>
+</head>
+<body>
+	<div id="example"></div>
+	<script type="text/babel">
+		class Timer extends React.Component {
+			constructor(props) {
+			    super(props);
+			    this.state = {secondsElapsed: 0};
+			}
+
+			tick() {
+			    this.setState(
+			    	{secondsElapsed: this.state.secondsElapsed + 1
+			    });
+	  		}
+
+			componentDidMount() {
+				this.interval=setInterval(()=>this.tick(),1000);
+			}
+
+			componentWillUnmount() {
+				clearInterval(this.interval);
+			}
+
+			render() {
+				return (
+					<div>
+						Secends Elapsed:{this.state.secondsElapsed}
+					</div>
+				);
+			}
+
+		}
+
+		ReactDOM.render(
+			<Timer />,
+			document.getElementById("example")
+		);
+	</script>
+</body>
+</html>

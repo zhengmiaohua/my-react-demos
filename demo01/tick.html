@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>tick</title>
+	<script src="../build/react.js"></script>
+	<script src="../build/react-dom.js"></script>
+	<!--browser将jsx语法转化为JavaScript-->
+	<script src="../build/browser.min.js"></script>
+</head>
+<body>
+	<div id="root"></div>
+	<script type="text/babel">
+		function tick(){
+			const element = 
+				(<div>
+					<h1>hello world</h1>
+					<h2>it is {new Date().toLocaleTimeString()}</h2>
+				</div>
+			);
+			ReactDOM.render(element,
+			document.getElementById("root"));
+		}
+		setInterval(tick,1000);
+	</script>
+</body>
+</html>
