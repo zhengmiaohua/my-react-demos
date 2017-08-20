@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>tick</title>
+	<script src="../build/react.js"></script>
+	<script src="../build/react-dom.js"></script>
+	<!--browser将jsx语法转化为JavaScript-->
+	<script src="../build/browser.min.js"></script>
+	<style>
+		table.gridtable {
+			width:300px;
+	        font-family: verdana,arial,sans-serif;
+	        font-size:11px;
+	        color:#333333;
+	        border-width: 1px;
+	        border-color: #666666;
+	        border-collapse: collapse;
+	        text-align:center;
+	    }
+    	table.gridtable th {
+	        border-width: 1px;
+	        padding: 8px;
+	        border-style: solid;
+	        border-color: #666666;
+	        background-color: #dedede;
+    	}
+    	table.gridtable td {
+	        border-width: 1px;
+	        padding: 8px;
+	        border-style: solid;
+	        border-color: #666666;
+	        background-color: #ffffff;
+	    }
+	</style>
+</head>
+<body>
+	<div id="root"></div>
+	<script type="text/babel">
+		const SCORE=[
+				{name: '张三', gender: '男', chinese: 85, math: 98, id:0},
+				{name: '张三', gender: '女', chinese: 95, math: 90, id:1},
+    			{name: '李四', gender: '男', chinese: 65, math: 48, id:2},
+   			    {name: '大妹', gender: '女', chinese: 95, math: 100,id:3},
+    			{name: '王五', gender: '男', chinese: 75, math: 88, id:4},
+    			{name: '赵钱', gender: '男', chinese: 75, math: 98, id:5},
+    			{name: '二妹', gender: '女', chinese: 90, math: 98, id:6}
+		];
+		var _StudentScoreTable=null;
+		class StudentScoreTable extends React.Component{
+			constructor(props){
+				super(props);
+				this.state={
+					genderFilter:0,
+					nameFilter:''
+				}
+				//把StudentScoreTable组件赋值给一个变量，以便在其它组件中可以使用此组件的方法,直接通过其组件句柄去直接访问其方法
+				_StudentScoreTable=this;
+				this.onGenderChange=this.onGenderChange.bind(this);
+				this.onNameChange=this.onNameChange.bind(this);
+			}
+			onGenderChange(gender){
+				this.setState({genderFilter:gender});
+			}
+			onNameChange(name){
+				this.setState({nameFilter:name})
+			}
+			render(){
+				return (
+					<div>
+						<GenderInputBar genderFilter={this.genderFilter}/>
+						<NameInputBar nameFilter={this.nameFilter}/>
+						<ScoreTable scoreArr={this.props.score} genderFilter={this.state.genderFilter} nameFilter={this.state.nameFilter}/>
+					</div>
+				);
+			}
+		}
+
+		class ScoreTable extends React.Component{
+			constructor(props){
+				super(props);
+
+			}
+			render(){
+				let rows=[];
+				let genderFilter=this.props.genderFilter;
+				let nameFilter=this.props.nameFilter;
+				const GENDER=['','男','女']
+				this.props.scoreArr.map((scoreItem)=>{
+					if(genderFilter!==0&&nameFilter===''){
+						if(scoreItem.gender===GENDER[genderFilter]){
+							rows.push(<ScoreItem score={scoreItem} key={scoreItem.id}/>)
+						}
+						return;
+					}
+					if(genderFilter===0&&nameFilter!==''){
+						if(scoreItem.name===nameFilter){
+							rows.push(<ScoreItem score={scoreItem} key={scoreItem.id} />)
+						}
+						return;
+					}
+					if(genderFilter!==0&&nameFilter!==''){
+						if(scoreItem.gender===GENDER[genderFilter]&&scoreItem.name===nameFilter){
+							rows.push(<ScoreItem score={scoreItem} key={scoreItem.id} />)
+						}
+						return;
+					}
+					rows.push(<ScoreItem score={scoreItem} key={scoreItem.id} />)
+
+				})
+				return (
+					<table className="gridtable">
+						<thead>
+							<tr>
+								<th>姓名</th>
+                        		<th>性别</th>
+                        		<th>语文</th>
+                        		<th>数学</th>
+							</tr>
+						</thead>
+						<tbody>
+							{rows}
+						</tbody>
+					</table>
+				);
+			}
+		}
+
+		class ScoreItem extends React.Component{
+			constructor(props){
+				super(props);
+			}
+			render(){
+				let score=this.props.score;
+				return (
+					<tr>
+						<td>{score.name}</td>
+						<td>{score.gender}</td>
+                		<td>{score.chinese}</td>
+               	 		<td>{score.math}</td>
+					</tr>
+				);
+			}
+		}
+
+		class GenderInputBar extends React.Component{
+			constructor(props){
+				super(props);
+				this.genderChangeHandler=this.genderChangeHandler.bind(this);
+			}
+			genderChangeHandler(e){
+				_StudentScoreTable.onGenderChange(e.target.value);
+			}
+			render(){
+				return (
+					<div>
+						<from>
+							<label>按性别筛选：</label>
+							<select onChange={this.genderChangeHandler}>
+								<option value="0">All</option>
+								<option value="1">男</option>
+								<option value="2">女</option>
+							</select>
+						</from>
+					</div>
+				);
+			}
+		}
+
+		class NameInputBar extends React.Component{
+			constructor(props){
+				super(props);
+				this.nameChangeHandler=this.nameChangeHandler.bind(this)
+			}
+			nameChangeHandler(e){
+				_StudentScoreTable.onNameChange(e.target.value)
+			}
+			render(){
+				return (
+					<div>
+						<form>
+							<label htmlFor="nameInput">按姓名筛选：</label>
+							<input type="text" id="nameInput" value={this.props.nameFilter} onChange={this.nameChangeHandler} />
+						</form>
+					</div>
+				);
+			}
+		}
+		
+		ReactDOM.render(
+			<StudentScoreTable score={SCORE} />,
+			document.getElementById("root"));
+	</script>
+</body>
+</html>
